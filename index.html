@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello Webpack</title>
+  </head>
+  <body>
+    <div class="main">
+      <button id="play">Play</button>
+      <button id="pause">Pause</button>
+      <button id="continue">Continue</button>
+    </div>
+    <script src="./dist/index.js"></script>
+    <script>
+      setTimeout(() => {
+        const tl = new Timeline.default([
+          {
+            start: 0,
+            duration: 2,
+            cb: () => {
+              console.log("Test");
+            }
+          },
+          {
+            followUp: true,
+            duration: 2,
+            cb: () => {
+              console.log("Test 2 follow-up");
+            }
+          },
+          {
+            start: 1,
+            duration: 2,
+            cb: () => {
+              console.log("Test 3 - but sooner then Test 2 follow-up");
+            }
+          }
+        ]);
+        tl.play();
+      }, 20);
+    </script>
+  </body>
+</html>
