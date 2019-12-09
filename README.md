@@ -39,6 +39,7 @@ const tl = new Timeline([
 ### Timeline entry options
 
 <br>
+
 **start** `number` (in seconds)<br >
 A number to define when the callback of the entry should fire <br>Mandatory when NOT using `followUp` in the next entry!
 
