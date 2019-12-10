@@ -5,10 +5,34 @@
   </head>
   <body>
     <div class="main">
+      <div id="timeline_stamp">0.00</div>
       <button id="play">Play</button>
       <button id="pause">Pause</button>
       <button id="continue">Continue</button>
+      <div class="bars">
+        <div class="bar-single bar__1"></div>
+        <div class="bar-single bar__2"></div>
+        <div class="bar-single bar__3"></div>
+        <div class="bar-single bar__4"></div>
+      </div>
     </div>
+    <style>
+      .bars {
+        margin-top: 30px;
+      }
+      .bar-single {
+        width: 1px;
+        height: 30px;
+        background: red;
+        overflow: hidden;
+        margin-bottom: 20px;
+        transition: 500ms ease-in-out all;
+      }
+      .bar-single.active {
+        width: 300px;
+        transition: 500ms ease-in-out all;
+      }
+    </style>
     <script src="./dist/index.js"></script>
     <script>
       setTimeout(() => {
@@ -17,30 +41,40 @@
             start: 0,
             duration: 2,
             onStart: () => {
-              console.log("Test 1");
+              document.querySelector(".bar__1").classList.add("active");
             },
             onEnd: () => {
-              console.log("Test 1 end");
+              document.querySelector(".bar__1").classList.remove("active");
             }
           },
           {
             followUp: true,
             duration: 2,
             onStart: () => {
-              console.log("Test 2 follow-up");
+              document.querySelector(".bar__2").classList.add("active");
             },
             onEnd: () => {
-              console.log("Test 2 follow-up end");
+              document.querySelector(".bar__2").classList.remove("active");
             }
           },
           {
             followUp: true,
             duration: 2,
             onStart: () => {
-              console.log("Test 3");
+              document.querySelector(".bar__3").classList.add("active");
             },
             onEnd: () => {
-              console.log("Test 3 -- end");
+              document.querySelector(".bar__3").classList.remove("active");
+            }
+          },
+          {
+            start: 2.6,
+            duration: 2,
+            onStart: () => {
+              document.querySelector(".bar__4").classList.add("active");
+            },
+            onEnd: () => {
+              document.querySelector(".bar__4").classList.remove("active");
             }
           }
         ]);
@@ -52,6 +86,11 @@
         });
         document.querySelector("#continue").addEventListener("click", e => {
           tl.continue();
+        });
+        tl.onUpdate(args => {
+          document.querySelector("#timeline_stamp").innerHTML = (
+            Math.round(args.progress) / 1000
+          ).toFixed(2);
         });
       }, 20);
     </script>
