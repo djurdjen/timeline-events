@@ -1,6 +1,6 @@
 # Timeline events
 
-A package for firing events on custom points on a virtual timeline.
+A package for firing events at custom points on a virtual timeline.
 
 ```
 yarn add timeline-events
@@ -56,6 +56,8 @@ tl.play();
 | `.continue()`                 | Continues timeline when in a paused state           |
 | `.onUpdate(function({args}))` | Callback for every interval (every 0.01s)           |
 
+<br>
+
 ## Timeline entry options
 
 | options  | accepts    | description                                                                                                                  |
@@ -64,4 +66,4 @@ tl.play();
 | duration | `number`   | Duration ( in seconds ) until next animation. **(Mandatory)**                                                                |
 | followUp | `boolean`  | Fire immediately after the previous entry ends                                                                               |
 | onStart  | `function` | The callback fired when reaching the startingpoint of an event                                                               |
-| onEnd    | `function` | callback fired when reaching the endpoint of the duration of an event                                                        |
+| onEnd    | `function` | callback fired when reaching the endpoint of <br>the duration of an event                                                    |

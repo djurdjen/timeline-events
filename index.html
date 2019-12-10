@@ -34,7 +34,7 @@
             }
           },
           {
-            start: 5,
+            followUp: true,
             duration: 2,
             onStart: () => {
               console.log("Test 3");
@@ -46,9 +46,6 @@
         ]);
         document.querySelector("#play").addEventListener("click", e => {
           tl.play();
-          tl.onUpdate(args => {
-            console.log(args.progress);
-          });
         });
         document.querySelector("#pause").addEventListener("click", e => {
           tl.pause();
