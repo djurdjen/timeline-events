@@ -1,78 +1,126 @@
 const uuid = require("uuid/v4.js");
 
-import { RequireAtLeastOne } from "./RequireAtLeastOne";
-
-interface TimeEventBase {
-  start?: number;
-  followUp?: boolean;
-  duration?: number;
-  id?: string;
-  cb: Function;
-}
-type TimeEvent = RequireAtLeastOne<TimeEventBase, "start" | "followUp">;
+import { TimeEvent } from "./TimeEventType";
 
 export default class Timeline {
   manifest: Array<TimeEvent>;
   timer: {
     instance: ReturnType<typeof setInterval>;
     duration: number;
-    callback: Function;
+    onInterval: Function;
   };
   progress: number;
   sequenceIndex: number;
+  totalDuration: number;
+  state: string;
+  updateCb: Function;
 
   constructor(manifest: Array<TimeEvent> = []) {
-    if (!manifest.length) {
-      console.warn(
-        "Timeline: No events in manifest, this might cause an error"
-      );
-    }
+    this.state = "stopped";
     this.manifest = manifest;
     this.progress = 0;
     this.sequenceIndex = 0;
-    this.timer = { instance: null, duration: null, callback: null };
+    this.totalDuration = 0;
+    this.updateCb = null;
+    this.timer = {
+      instance: null,
+      duration: null,
+      onInterval: null
+    };
+  }
+  createCallbackManifest(sequence: Array<TimeEvent>): { [i: string]: any } {
+    const manifest: { [i: string]: any } = {};
+    sequence.forEach(entry => {
+      const end = Math.round((entry.start + entry.duration) * 100) / 100;
+      const start = entry.start;
+      entry.onStart &&
+        (manifest[start] = [...(manifest[start] || []), ...[entry.onStart]]);
+      entry.onEnd &&
+        (manifest[end] = [...(manifest[end] || []), ...[entry.onEnd]]);
+    });
+    return manifest;
+  }
+  async stop(cb: Function = null) {
+    clearInterval(this.timer.instance); // clear the timer instance
+    this.progress = 0;
+    this.state = "stopped";
+    if (cb) {
+      cb({ progress: this.progress, totalDuration: this.totalDuration });
+    }
   }
   async play() {
     await this.checkManifest("play");
+    await this.stop();
+    this.state = "playing";
     this.manifest = this.provideIds();
-    this.progress = 0;
     const sequence = this.organiseSequence();
     const lastEntry = sequence[sequence.length - 1];
+    const callbacks = this.createCallbackManifest(sequence); // create a manifest that fires the callbacks on the right moment
+    const keys = Object.keys(callbacks);
+    this.totalDuration = (lastEntry.start + lastEntry.duration) * 1000; // set total duration of all timeline events
     this.initTimer({
-      time: (lastEntry.start + lastEntry.duration) * 1000,
-      cb: (stamp: number) => {
-        if (
-          sequence[this.sequenceIndex] &&
-          stamp >= sequence[this.sequenceIndex].start
-        ) {
-          sequence[this.sequenceIndex].cb();
-          this.sequenceIndex++;
+      time: this.totalDuration,
+      onInterval: (stamp: number) => {
+        for (let i = 0; i < keys.length; i++) {
+          if (stamp >= Number(keys[i])) {
+            callbacks[keys[i]].forEach((cb: any, index: number) => {
+              cb(stamp);
+              delete callbacks[keys[i]][index]; // remove when called to prevent double firing
+            });
+          }
         }
       }
     });
   }
-  async pause() {
-    await this.checkManifest("pause");
+  async pause(cb: Function = null) {
+    if (this.state !== "playing") {
+      console.warn("Can't continue. Timeline is not in a playing state");
+      return;
+    }
     clearInterval(this.timer.instance);
+    this.state = "paused";
+    if (cb) {
+      cb({ progress: this.progress, totalDuration: this.totalDuration });
+    }
   }
   async continue() {
+    if (this.state !== "paused") {
+      console.warn("Can't continue. Timeline is not in a paused state");
+      return;
+    }
     await this.checkManifest("continue");
     this.initTimer({ skipConfig: true });
+    this.state = "playing";
   }
 
-  initTimer(args: { time?: number; cb?: Function; skipConfig?: boolean }) {
+  onUpdate(cb: Function) {
+    this.updateCb = cb;
+  }
+
+  initTimer(args: {
+    time?: number;
+    onInterval?: Function;
+    skipConfig?: boolean;
+  }) {
     if (!args.skipConfig) {
       this.timer.duration = args.time;
-      this.timer.callback = args.cb;
+      this.timer.onInterval = args.onInterval;
     }
     this.timer.instance = setInterval(() => {
-      this.progress += 5;
-      if (this.progress >= this.timer.duration) {
-        clearInterval(this.timer.instance);
+      this.progress += 10;
+      if (this.progress > this.timer.duration) {
+        clearInterval(this.timer.instance); // end of timeline
         return;
       }
-      this.timer.callback(this.progress / 1000);
-    }, 5);
+      if (this.updateCb) {
+        // callback for each interval
+        this.updateCb({
+          progress: this.progress,
+          totalDuration: this.totalDuration
+        });
+      }
+      this.timer.onInterval(this.progress / 1000);
+    }, 10);
   }
 
   organiseSequence(): Array<TimeEvent> {
