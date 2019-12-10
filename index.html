@@ -38,7 +38,7 @@
       setTimeout(() => {
         const tl = new Timeline.default([
           {
-            start: 0,
+            followUp: true,
             duration: 2,
             onStart: () => {
               document.querySelector(".bar__1").classList.add("active");
@@ -69,7 +69,6 @@
           },
           {
             start: 2.6,
-            duration: 2,
             onStart: () => {
               document.querySelector(".bar__4").classList.add("active");
             },

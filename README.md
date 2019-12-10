@@ -48,7 +48,7 @@ tl.play();
 
 ## Timeline functions
 
-| functions                     | description                                         |
+| Functions                     | Description                                         |
 | ----------------------------- | --------------------------------------------------- |
 | `.play()`                     | Plays timeline. Start from 0 everytime when clicked |
 | `.stop(function({args}))`     | Stops timeline                                      |
@@ -60,10 +60,10 @@ tl.play();
 
 ## Timeline entry options
 
-| options  | accepts    | description                                                                                                                        |
-| -------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| start    | `number`   | A number to define when the callback of the entry should fire <br>**Mandatory on first event entry or when NOT using `followUp`!** |
-| duration | `number`   | Duration ( in seconds ) until next event. **(Mandatory)**                                                                          |
-| followUp | `boolean`  | Fire immediately after the previous event duration has reached its end                                                             |
-| onStart  | `function` | The callback fired when reaching the startingpoint of an event                                                                     |
-| onEnd    | `function` | callback fired when reaching the endpoint of <br>the duration of an event                                                          |
+| Property | Type                                      | Description                                                            |
+| -------- | ----------------------------------------- | ---------------------------------------------------------------------- |
+| start    | `number` (Required if followUp is `null`) | A number to define when the event should start                         |
+| duration | `number` (Required)                       | Duration ( in seconds ) until the event ends.                          |
+| followUp | `boolean` (Required if start is `null`)   | Fire immediately after the previous event duration has reached its end |
+| onStart  | `function`                                | The callback fired when reaching the startingpoint of an event         |
+| onEnd    | `function`                                | callback fired when reaching the endpoint of the duration of an event  |

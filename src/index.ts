@@ -158,11 +158,11 @@ export default class Timeline {
     this.manifest.forEach((seq: any, index: number) => {
       if ("start" in seq) {
         newValues.push({ ...seq, start: seq.start, id: seq.id });
-      } else if (seq.followUp) {
+      } else {
         const prev = newValues[index - 1];
         newValues.push({
           ...seq,
-          start: prev.start + prev.duration || 0,
+          start: seq.followUp && prev ? prev.start + prev.duration : 0,
           id: seq.id
         });
       }
@@ -193,11 +193,26 @@ export default class Timeline {
     });
     return manifest;
   }
+  /**
+   * Check manifest for errors
+   * @param {string} fn - Function that the user tried to call
+   * @return {Promise}
+   */
   checkManifest(fn: string): Promise<{}> {
     return new Promise(resolve => {
       if (!this.manifest.length) {
         throw new Error(
           `Cannot call function: ${fn}, no valid manifest provided.`
+        );
+      }
+      if (this.manifest.find(entry => !entry.start && !entry.followUp)) {
+        throw new Error(
+          `in event entries. Every entry should contain a 'start' or 'followUp' property.`
+        );
+      }
+      if (this.manifest.find(entry => !entry.duration)) {
+        throw new Error(
+          `in event entries. Duration property is required. Please check if all entries contain a duration property`
         );
       }
       resolve();
