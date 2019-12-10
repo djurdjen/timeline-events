@@ -60,10 +60,10 @@ tl.play();
 
 ## Timeline entry options
 
-| options  | accepts    | description                                                                                                                  |
-| -------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| start    | `number`   | A number to define when the callback of the entry should fire <br>**Mandatory when NOT using `followUp` in the next entry!** |
-| duration | `number`   | Duration ( in seconds ) until next animation. **(Mandatory)**                                                                |
-| followUp | `boolean`  | Fire immediately after the previous entry ends                                                                               |
-| onStart  | `function` | The callback fired when reaching the startingpoint of an event                                                               |
-| onEnd    | `function` | callback fired when reaching the endpoint of <br>the duration of an event                                                    |
+| options  | accepts    | description                                                                                                |
+| -------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| start    | `number`   | A number to define when the callback of the entry should fire <br>**Mandatory when NOT using `followUp`!** |
+| duration | `number`   | Duration ( in seconds ) until next event. **(Mandatory)**                                                  |
+| followUp | `boolean`  | Fire immediately after the previous event duration has reached its end                                     |
+| onStart  | `function` | The callback fired when reaching the startingpoint of an event                                             |
+| onEnd    | `function` | callback fired when reaching the endpoint of <br>the duration of an event                                  |
