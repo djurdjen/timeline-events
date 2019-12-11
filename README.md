@@ -48,13 +48,13 @@ tl.play();
 
 ## Timeline functions
 
-| Functions                     | Description                                         |
-| ----------------------------- | --------------------------------------------------- |
-| `.play()`                     | Plays timeline. Start from 0 everytime when clicked |
-| `.stop(function({args}))`     | Stops timeline                                      |
-| `.pause(function({args}))`    | Pauses timeline                                     |
-| `.continue()`                 | Continues timeline when in a paused state           |
-| `.onUpdate(function({args}))` | Callback for every interval (every 0.01s)           |
+| Functions                        | Description                                                                                                                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.play(<customProgress:number>)` | Plays timeline. Start from 0 everytime when clicked<br>You can add custom progress number (in seconds) as an argument. This will skip the entries that have passed the progress |
+| `.stop(function({args}))`        | Stops timeline                                                                                                                                                                  |
+| `.pause(function({args}))`       | Pauses timeline                                                                                                                                                                 |
+| `.continue()`                    | Continues timeline when in a paused state                                                                                                                                       |
+| `.onUpdate(function({args}))`    | Callback for every interval (every 0.01s)                                                                                                                                       |
 
 <br>
 

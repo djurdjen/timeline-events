@@ -37,16 +37,18 @@ export default class Timeline {
   }
   /**
    * Playing the timeline
+   * @param {number} customProgress - add a custom progress argument to the play method
    * @return {void}
    */
-  async play() {
+  async play(customProgress: number = 0) {
     await this.checkManifest("play");
     await this.stop();
     this.state = "playing";
     this.manifest = this.provideIds();
     const sequence = this.organiseSequence();
     const lastEntry = sequence[sequence.length - 1];
-    const callbacks = this.createCallbackList(sequence); // create a manifest that fires the callbacks on the right moment
+    this.progress = customProgress * 1000;
+    const callbacks = this.createCallbackList(sequence, customProgress); // create a manifest that fires the callbacks on the right moment
     const keys = Object.keys(callbacks);
     this.totalDuration = (lastEntry.start + lastEntry.duration) * 1000; // set total duration of all timeline events
     this.initTimer({
@@ -55,7 +57,11 @@ export default class Timeline {
         for (let i = 0; i < keys.length; i++) {
           if (stamp >= Number(keys[i])) {
             callbacks[keys[i]].forEach((cb: any, index: number) => {
-              cb(stamp);
+              cb({
+                stamp,
+                progress: this.progress,
+                percentage: this.getPercentage(this.progress)
+              });
               delete callbacks[keys[i]][index]; // remove when called to prevent double firing
             });
           }
@@ -64,7 +70,7 @@ export default class Timeline {
         if (this.updateCb) {
           this.updateCb({
             progress: this.progress,
-            totalDuration: this.totalDuration
+            percentage: this.getPercentage(this.progress)
           });
         }
       }
@@ -140,6 +146,7 @@ export default class Timeline {
       this.timer.duration = args.time;
       this.timer.onInterval = args.onInterval;
     }
+    this.timer.onInterval(this.progress / 1000); // init a first time when timer = 0
     this.timer.instance = setInterval(() => {
       this.progress += 10;
       if (this.progress > this.timer.duration) {
@@ -181,7 +188,12 @@ export default class Timeline {
    * @param {Array} sequence - The sequence of time-event properties
    * @return {Object}
    */
-  createCallbackList(sequence: Array<TimeEvent>): { [i: string]: any } {
+  createCallbackList(
+    sequence: Array<TimeEvent>,
+    customProgress: number
+  ): { [i: string]: any } {
+    // remove the callbacks if a requested custom progress has progressed further then the callback's execution moment
+    sequence = sequence.filter(entry => entry.start >= customProgress);
     const manifest: { [i: string]: any } = {};
     sequence.forEach(entry => {
       const end = Math.round((entry.start + entry.duration) * 100) / 100;
@@ -217,5 +229,16 @@ export default class Timeline {
       }
       resolve();
     });
+  }
+  getDuration(): number {
+    const lastEntry = this.organiseSequence().pop();
+    return (lastEntry.start + lastEntry.duration) * 1000;
+  }
+  getPercentage(stamp: number): number {
+    return (
+      Math.round(
+        1000 - ((stamp - this.totalDuration) / this.totalDuration) * -1000
+      ) / 10
+    );
   }
 }

@@ -5,92 +5,168 @@
   </head>
   <body>
     <div class="main">
-      <div id="timeline_stamp">0.00</div>
-      <button id="play">Play</button>
-      <button id="pause">Pause</button>
-      <button id="continue">Continue</button>
-      <div class="bars">
-        <div class="bar-single bar__1"></div>
-        <div class="bar-single bar__2"></div>
-        <div class="bar-single bar__3"></div>
-        <div class="bar-single bar__4"></div>
+      <h1>Timeline events demo</h1>
+      <div class="button-container">
+        <button id="play">Play</button>
+        <button id="pause">Pause</button>
+        <button id="continue">Continue</button>
+      </div>
+      <div class="bar-progress-container">
+        <div class="timeline-stamp">0%</div>
+        <div class="bar-progress"></div>
       </div>
     </div>
     <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .main {
+        max-width: 700px;
+        margin: 0 auto;
+      }
+      .main h1 {
+        text-align: center;
+      }
+      .button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 12px;
+        margin-bottom: 12px;
+      }
+      .button-container button {
+        padding: 6px 12px;
+        background-color: #35bde6;
+        color: white;
+        font-weight: bold;
+        margin: 0 12px;
+        border: 0;
+        border-radius: 4px;
+        cursor: pointer;
+      }
       .bars {
         margin-top: 30px;
       }
-      .bar-single {
-        width: 1px;
+      .bar-progress-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
         height: 30px;
+        background-color: #cccccc;
+        position: relative;
+      }
+      .bar-progress {
+        width: 1px;
         background: red;
         overflow: hidden;
-        margin-bottom: 20px;
-        transition: 500ms ease-in-out all;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
       }
-      .bar-single.active {
-        width: 300px;
-        transition: 500ms ease-in-out all;
+      .bar-single__label {
+        position: absolute;
+        top: 43px;
+        background-color: white;
+        padding: 12px;
+        border-radius: 5px;
+        box-shadow: 2px 2px 13px -3px rgba(0, 0, 0, 0.4);
+        width: 100px;
+        transform: translateX(-50%);
+        text-align: center;
+        z-index: 10;
+        font-size: 13px;
+        font-weight: bold;
+        opacity: 0;
+        animation: animate-label 0.4s forwards; /* IE 10+, Fx 29+ */
+      }
+      @keyframes animate-label {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -33px);
+        }
+        100% {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+      }
+      .bar-single__label:after {
+        content: "";
+        display: block;
+        position: absolute;
+        left: 50%;
+        margin-left: -5px;
+        top: -5px;
+        width: 10px;
+        height: 10px;
+        background-color: white;
+        transform: rotate(45deg);
+        box-shadow: -3px -3px 6px -2px rgba(0, 0, 0, 0.3);
+      }
+      .timeline-stamp {
+        color: white;
+        display: block;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 12px;
+        z-index: 15;
       }
     </style>
     <script src="./dist/index.js"></script>
     <script>
+      createLabel = (perc, text) => {
+        const label = document.createElement("div");
+        label.classList.add("bar-single__label");
+        label.style.left = `${perc}%`;
+        label.innerHTML = text;
+        document.querySelector(".bar-progress-container").appendChild(label);
+      };
       setTimeout(() => {
         const tl = new Timeline.default([
           {
             followUp: true,
             duration: 2,
-            onStart: () => {
-              document.querySelector(".bar__1").classList.add("active");
-            },
-            onEnd: () => {
-              document.querySelector(".bar__1").classList.remove("active");
+            onStart: args => {
+              createLabel(args.percentage, "First label");
             }
           },
           {
             followUp: true,
             duration: 2,
-            onStart: () => {
-              document.querySelector(".bar__2").classList.add("active");
-            },
-            onEnd: () => {
-              document.querySelector(".bar__2").classList.remove("active");
+            onStart: args => {
+              createLabel(args.percentage, "Second label");
             }
           },
           {
             followUp: true,
             duration: 2,
-            onStart: () => {
-              document.querySelector(".bar__3").classList.add("active");
+            onStart: args => {
+              createLabel(args.percentage, "Third label");
             },
-            onEnd: () => {
-              document.querySelector(".bar__3").classList.remove("active");
-            }
-          },
-          {
-            start: 12.6,
-            duration: 2,
-            onStart: () => {
-              document.querySelector(".bar__4").classList.add("active");
-            },
-            onEnd: () => {
-              document.querySelector(".bar__4").classList.remove("active");
+            onEnd: args => {
+              createLabel(args.percentage, "End label");
             }
           }
         ]);
-        document.querySelector("#play").addEventListener("click", e => {
+        let duration = tl.getDuration();
+        document.querySelector("#play").addEventListener("click", () => {
           tl.play();
+          [...document.querySelectorAll(".bar-single__label")].forEach(el => {
+            el.remove();
+          });
         });
-        document.querySelector("#pause").addEventListener("click", e => {
+        document.querySelector("#pause").addEventListener("click", () => {
           tl.pause();
         });
-        document.querySelector("#continue").addEventListener("click", e => {
+        document.querySelector("#continue").addEventListener("click", () => {
           tl.continue();
         });
         tl.onUpdate(args => {
-          document.querySelector("#timeline_stamp").innerHTML = (
-            Math.round(args.progress) / 1000
-          ).toFixed(2);
+          document.querySelector(".bar-progress").style.width =
+            args.percentage + "%";
+          document.querySelector(".timeline-stamp").innerHTML =
+            Math.round(args.percentage) + "%";
         });
       }, 20);
     </script>
