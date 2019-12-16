@@ -6,8 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "webpack --mode development --watch",
-    "pub": "yarn test && yarn build && npm publish",
     "build": "webpack --mode production",
+    "prepack": "yarn build && yarn test",
     "test": "jest"
   },
   "repository": {
