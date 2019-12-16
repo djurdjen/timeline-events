@@ -4,3 +4,5 @@ index.html
 webpack.config.js
 .gitignore
 yarn.lock
+yarn-error.log
+jest.config.js

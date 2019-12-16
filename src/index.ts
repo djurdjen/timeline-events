@@ -17,6 +17,7 @@ export default class Timeline {
   totalDuration: number;
   state: string;
   updateCb: Function;
+  finishedCb: Function;
 
   /**
    * Create a manifest.
@@ -29,6 +30,7 @@ export default class Timeline {
     this.sequenceIndex = 0;
     this.totalDuration = 0;
     this.updateCb = null;
+    this.finishedCb = null;
     this.timer = {
       instance: null,
       duration: null,
@@ -45,24 +47,26 @@ export default class Timeline {
     await this.stop();
     this.state = "playing";
     this.manifest = this.provideIds();
-    const sequence = this.organiseSequence();
-    const lastEntry = sequence[sequence.length - 1];
     this.progress = customProgress * 1000;
-    const callbacks = this.createCallbackList(sequence, customProgress); // create a manifest that fires the callbacks on the right moment
+    this.totalDuration = this.getDuration();
+    const callbacks = this.createCallbackList(
+      this.organiseSequence(),
+      customProgress
+    ); // create a manifest that fires all the callbacks on the right moment
+    // console.log(callbacks);
     const keys = Object.keys(callbacks);
-    this.totalDuration = (lastEntry.start + lastEntry.duration) * 1000; // set total duration of all timeline events
     this.initTimer({
       time: this.totalDuration,
       onInterval: (stamp: number) => {
         for (let i = 0; i < keys.length; i++) {
-          if (stamp >= Number(keys[i])) {
+          if (stamp >= Number(keys[i]) && callbacks[keys[i]].length) {
             callbacks[keys[i]].forEach((cb: any, index: number) => {
               cb({
                 stamp,
                 progress: this.progress,
                 percentage: this.getPercentage(this.progress)
               });
-              delete callbacks[keys[i]][index]; // remove when called to prevent double firing
+              delete callbacks[keys[i]][index]; // remove when called to prevent multiple firings of callback
             });
           }
         }
@@ -129,6 +133,9 @@ export default class Timeline {
   onUpdate(cb: Function) {
     this.updateCb = cb;
   }
+  finished(cb: Function) {
+    this.finishedCb = cb;
+  }
   /**
    * Sort and organise time-event entries
    * @param {number} time - The total timespan of the timeline
@@ -149,11 +156,12 @@ export default class Timeline {
     this.timer.onInterval(this.progress / 1000); // init a first time when timer = 0
     this.timer.instance = setInterval(() => {
       this.progress += 10;
+      this.timer.onInterval(this.progress / 1000);
       if (this.progress > this.timer.duration) {
         clearInterval(this.timer.instance); // end of timeline
+        this.finishedCb && this.finishedCb();
         return;
       }
-      this.timer.onInterval(this.progress / 1000);
     }, 10);
   }
   /**
@@ -197,7 +205,7 @@ export default class Timeline {
     const manifest: { [i: string]: any } = {};
     sequence.forEach(entry => {
       const end = Math.round((entry.start + entry.duration) * 100) / 100;
-      const start = entry.start;
+      const start = Math.round(entry.start * 100) / 100;
       entry.onStart &&
         (manifest[start] = [...(manifest[start] || []), ...[entry.onStart]]);
       entry.onEnd &&
@@ -217,7 +225,7 @@ export default class Timeline {
           `Cannot call function: ${fn}, no valid manifest provided.`
         );
       }
-      if (this.manifest.find(entry => !entry.start && !entry.followUp)) {
+      if (this.manifest.find(entry => !("start" in entry) && !entry.followUp)) {
         throw new Error(
           `in event entries. Every entry should contain a 'start' or 'followUp' property.`
         );
@@ -230,10 +238,19 @@ export default class Timeline {
       resolve();
     });
   }
+  /**
+   * Get duration
+   * @return {number}
+   */
   getDuration(): number {
     const lastEntry = this.organiseSequence().pop();
     return (lastEntry.start + lastEntry.duration) * 1000;
   }
+  /**
+   * Get duration
+   * @param {number} stamp - given timestamp
+   * @return {number}
+   */
   getPercentage(stamp: number): number {
     return (
       Math.round(

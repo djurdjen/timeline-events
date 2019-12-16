@@ -126,26 +126,26 @@
         const tl = new Timeline.default([
           {
             followUp: true,
-            duration: 2,
+            duration: 1,
             onStart: args => {
-              createLabel(args.percentage, "First label");
+              createLabel(args.percentage, `Begin ${args.percentage}%`);
             }
           },
           {
             followUp: true,
-            duration: 2,
+            duration: 1.7,
             onStart: args => {
-              createLabel(args.percentage, "Second label");
+              createLabel(args.percentage, `2nd label ${args.percentage}%`);
             }
           },
           {
             followUp: true,
-            duration: 2,
+            duration: 4,
             onStart: args => {
-              createLabel(args.percentage, "Third label");
+              createLabel(args.percentage, `3rd label ${args.percentage}%`);
             },
             onEnd: args => {
-              createLabel(args.percentage, "End label");
+              createLabel(args.percentage, `End ${args.percentage}%`);
             }
           }
         ]);

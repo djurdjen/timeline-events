@@ -54,6 +54,7 @@ tl.play();
 | `.stop(function({args}))`        | Stops timeline                                                                                                                                                                  |
 | `.pause(function({args}))`       | Pauses timeline                                                                                                                                                                 |
 | `.continue()`                    | Continues timeline when in a paused state                                                                                                                                       |
+| `.finished()`                    | Callback for when timeline has finished                                                                                                                                         |
 | `.onUpdate(function({args}))`    | Callback for every interval (every 0.01s)                                                                                                                                       |
 
 <br>
