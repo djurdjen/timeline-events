@@ -4,9 +4,7 @@ A package for firing events at custom points on a virtual timeline.
 
 ### [Demo](https://codepen.io/djurdjen/pen/bGNBmrQ)
 
-<br>
-
-## Install
+## Installation
 
 ```
 yarn add timeline-events
