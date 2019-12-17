@@ -18,7 +18,7 @@ npm install timeline-events
 
 or import from cdn
 
-```
+```html
 <script src="https://unpkg.com/timeline-events/dist/index.var.js" />
 ```
 
