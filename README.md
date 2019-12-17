@@ -1,6 +1,6 @@
 # Timeline events
 
-A package for firing events at custom points on a virtual timeline.
+A package for firing events at custom intervals on a virtual timeline.
 
 ### [Demo](https://codepen.io/djurdjen/pen/bGNBmrQ)
 
@@ -61,11 +61,11 @@ tl.play();
 | Functions                        | Description                                                                                                                                                                     |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `.play(<customProgress:number>)` | Plays timeline. Start from 0 everytime when clicked<br>You can add custom progress number (in seconds) as an argument. This will skip the entries that have passed the progress |
-| `.stop(function({args}))`        | Stops timeline                                                                                                                                                                  |
-| `.pause(function({args}))`       | Pauses timeline                                                                                                                                                                 |
+| `.stop(<function({args})>)`      | Stops timeline                                                                                                                                                                  |
+| `.pause(<function({args})>)`     | Pauses timeline                                                                                                                                                                 |
 | `.continue()`                    | Continues timeline when in a paused state                                                                                                                                       |
 | `.finished()`                    | Callback for when timeline has finished                                                                                                                                         |
-| `.onUpdate(function({args}))`    | Callback for every interval (every 0.01s)                                                                                                                                       |
+| `.onUpdate(<function({args})>)`  | Callback for every interval (every 0.01s)                                                                                                                                       |
 
 <br>
 

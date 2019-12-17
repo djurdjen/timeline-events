@@ -19,7 +19,9 @@
     "timeline",
     "events",
     "typescript",
-    "timer"
+    "timer",
+    "schedule",
+    "intervals"
   ],
   "author": "Jurian Koning",
   "license": "MIT",
