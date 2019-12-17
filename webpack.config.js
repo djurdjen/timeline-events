@@ -31,6 +31,7 @@ const buildOutput = options => {
     output: {
       filename: "index." + options.target + ".js",
       library: "Timeline",
+      libraryExport: options.target === "var" ? "default" : "",
       libraryTarget: options.target,
       path: path.resolve(__dirname, "dist")
     }
@@ -44,6 +45,7 @@ const exportFunction = () => {
       output: {
         filename: "index.js",
         library: "Timeline",
+        libraryExport: "default",
         libraryTarget: "var",
         path: path.resolve(__dirname, "dist")
       }
@@ -58,9 +60,4 @@ const exportFunction = () => {
   }
 };
 
-// At the end of the file:
 module.exports = exportFunction();
-// module.exports = [
-//   moduleFormat({ format: "umd" }),
-//   moduleFormat({ format: "var", hash: "min" })
-// ];
