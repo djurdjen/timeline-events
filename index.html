@@ -27,6 +27,7 @@
       }
       .main h1 {
         text-align: center;
+        font-weight: 400;
       }
       .button-container {
         display: flex;
@@ -36,7 +37,6 @@
       }
       .button-container button {
         padding: 6px 12px;
-        background-color: #35bde6;
         color: white;
         font-weight: bold;
         margin: 0 12px;
@@ -44,20 +44,27 @@
         border-radius: 4px;
         cursor: pointer;
       }
-      .bars {
-        margin-top: 30px;
+      #play {
+        background-color: #23a52d;
       }
+      #pause {
+        background-color: #808080;
+      }
+      #continue {
+        background-color: #515696;
+      }
+
       .bar-progress-container {
         width: 100%;
         max-width: 600px;
-        margin: 0 auto;
+        margin: 30px auto 0;
         height: 30px;
         background-color: #cccccc;
         position: relative;
       }
       .bar-progress {
         width: 1px;
-        background: red;
+        background: #18942f;
         overflow: hidden;
         position: absolute;
         top: 0;

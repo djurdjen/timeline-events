@@ -2,6 +2,8 @@
 
 A package for firing events at custom points on a virtual timeline.
 
+### [Demo](https://codepen.io/djurdjen/pen/bGNBmrQ)
+
 ```
 yarn add timeline-events
 ```
@@ -10,6 +12,12 @@ or
 
 ```
 npm install timeline-events
+```
+
+or import from cdn
+
+```
+<script src="https://unpkg.com/timeline-events@1.2.2/dist/index.var.js" />
 ```
 
 ## Usage
