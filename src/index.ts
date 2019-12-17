@@ -53,7 +53,6 @@ export default class Timeline {
       this.organiseSequence(),
       customProgress
     ); // create a manifest that fires all the callbacks on the right moment
-    // console.log(callbacks);
     const keys = Object.keys(callbacks);
     this.initTimer({
       time: this.totalDuration,
@@ -140,7 +139,7 @@ export default class Timeline {
    * Sort and organise time-event entries
    * @param {number} time - The total timespan of the timeline
    * @callback onIntervalCallback - callback that initializes every time the interval fires
-   * @param {updateCallback} onInterval
+   * @param {onIntervalCallback} onInterval
    * @param {boolean} skipConfig - The sequence of time-event properties
    * @return {void}
    */
@@ -247,7 +246,7 @@ export default class Timeline {
     return (lastEntry.start + lastEntry.duration) * 1000;
   }
   /**
-   * Get duration
+   * Get percentage
    * @param {number} stamp - given timestamp
    * @return {number}
    */

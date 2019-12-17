@@ -2,11 +2,11 @@
   "name": "timeline-events",
   "version": "1.2.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/index.umd.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "webpack --mode development --watch",
-    "build": "webpack --mode production",
+    "dev": "cross-env NODE_ENV=development webpack --mode development --watch",
+    "build": "cross-env NODE_ENV=production webpack --mode production",
     "prepack": "yarn build && yarn test",
     "test": "jest"
   },
@@ -28,11 +28,13 @@
     "browser-sync": "^2.26.7",
     "browser-sync-webpack-plugin": "^2.2.2",
     "jest": "^24.9.0",
+    "parallel-webpack": "^2.4.0",
     "ts-jest": "^24.2.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.3",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "cross-env": "^6.0.3"
   },
   "dependencies": {
     "@types/node": "^12.12.15",

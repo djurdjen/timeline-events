@@ -1,8 +1,8 @@
 import Timeline from "./index";
 import { TimeEvent } from "./TimeEventType";
 
-test("All callbacks called in right order when timeline ends", done => {
-  const progress: Array<Object> = [];
+test("All callbacks called in right order when timeline ends", (done: Function) => {
+  const progress: Array<{ name: string; stamp: number }> = [];
   const manifest: Array<TimeEvent> = [
     {
       start: 0,

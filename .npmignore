@@ -6,3 +6,4 @@ webpack.config.js
 yarn.lock
 yarn-error.log
 jest.config.js
+dist/index.js
