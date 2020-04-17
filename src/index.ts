@@ -169,7 +169,7 @@ export default class Timeline {
    */
   organiseSequence(): Array<TimeEvent> {
     const newValues: Array<TimeEvent> = [];
-    this.manifest.forEach((seq: any, index: number) => {
+    this.manifest.forEach((seq: TimeEvent, index: number) => {
       if ("start" in seq) {
         newValues.push({ ...seq, start: seq.start, id: seq.id });
       } else {
@@ -198,10 +198,10 @@ export default class Timeline {
   createCallbackList(
     sequence: Array<TimeEvent>,
     customProgress: number
-  ): { [i: string]: any } {
+  ): { [i: string]: Array<number> } {
     // remove the callbacks if a requested custom progress has progressed further then the callback's execution moment
     sequence = sequence.filter(entry => entry.start >= customProgress);
-    const manifest: { [i: string]: any } = {};
+    const manifest: { [i: string]: Array<any> } = {};
     sequence.forEach(entry => {
       const end = Math.round((entry.start + entry.duration) * 100) / 100;
       const start = Math.round(entry.start * 100) / 100;
@@ -217,7 +217,7 @@ export default class Timeline {
    * @param {string} fn - Function that the user tried to call
    * @return {Promise}
    */
-  checkManifest(fn: string): Promise<{}> {
+  checkManifest<T>(fn: string): Promise<T> {
     return new Promise(resolve => {
       if (!this.manifest.length) {
         throw new Error(
